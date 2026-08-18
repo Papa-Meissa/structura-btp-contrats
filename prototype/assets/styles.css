@@ -1,0 +1,171 @@
+/* =========================================================================
+   PROTOTYPE — Générateur de contrats de prestation
+   Même système visuel que le site STRUCTURA BTP ("Le Dossier de Chantier") :
+   graphite + béton, accent laiton, sceau de conformité — pour que ce
+   prototype se présente comme un module du même outil, pas un gadget à part.
+   ========================================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root{
+  --ink-950:#15191D;
+  --steel-800:#232A31;
+  --steel-700:#323B43;
+  --steel-600:#5C666E;
+  --steel-400:#8B939A;
+
+  --concrete-50:#F1EFEA;
+  --concrete-100:#E7E3DB;
+  --concrete-200:#D8D2C5;
+
+  --brass-600:#A6721E;
+  --brass-700:#8A5D18;
+  --brass-800:#6F4B13;
+  --brass-300:#D9AD6B;
+  --brass-100:#F1E3C8;
+
+  --ok-600:#3E7A4E;
+  --ok-100:#E3F0E6;
+
+  --white:#FFFFFF;
+
+  --font-display:'Roboto Slab', serif;
+  --font-body:'Public Sans', sans-serif;
+
+  --wrap:1080px;
+  --gutter: clamp(20px, 5vw, 56px);
+}
+
+body{
+  margin:0; font-family:var(--font-body); color:var(--ink-950);
+  background:var(--concrete-50); line-height:1.55; font-size:16px;
+}
+h1,h2,h3,h4{ font-family:var(--font-display); font-weight:700; margin:0 0 0.5em; color:var(--ink-950); }
+p{ margin:0 0 1em; color:var(--steel-700); }
+a{ color:inherit; }
+.wrap{ max-width:var(--wrap); margin:0 auto; padding:0 var(--gutter); }
+
+/* ---------- Header ---------- */
+header{ background:var(--ink-950); border-bottom:1px solid rgba(241,239,234,0.1); }
+.nav-row{ display:flex; align-items:center; justify-content:space-between; gap:1.5rem; padding:1rem var(--gutter); }
+.brand{ display:flex; align-items:center; gap:0.7rem; }
+.brand-word{ font-family:var(--font-display); font-weight:700; font-size:1.02rem; color:var(--white); }
+.brand-word small{ display:block; font-family:var(--font-body); font-weight:500; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--brass-300); margin-top:2px; }
+.seal-mark{ width:36px; height:36px; flex:none; }
+.seal-mark .ring{ fill:none; stroke:var(--brass-600); stroke-width:2; }
+.seal-mark .ticks{ stroke:var(--brass-600); stroke-width:1.4; }
+.seal-mark text{ font-family:var(--font-display); font-weight:700; fill:var(--white); }
+.tool-label{ font-size:0.8rem; color:var(--steel-400); }
+
+/* ---------- Bande d'intro ---------- */
+.intro{ background:var(--steel-800); color:var(--concrete-100); padding: clamp(28px,4vw,44px) 0; }
+.intro h1{ color:var(--white); font-size:clamp(1.5rem,2.6vw,2rem); }
+.intro p{ color:var(--steel-400); max-width:72ch; margin-bottom:0.6rem; }
+.demo-note{
+  display:inline-flex; align-items:center; gap:0.5rem; margin-top:0.6rem;
+  font-size:0.8rem; color:var(--brass-300); border:1px solid rgba(217,173,107,0.4);
+  padding:0.4rem 0.8rem;
+}
+
+/* ---------- Cartes / sections ---------- */
+.panel{ background:var(--white); border:1px solid var(--concrete-200); padding: clamp(20px,3vw,32px); margin: clamp(24px,3vw,36px) 0; }
+.panel-title{ display:flex; align-items:center; gap:0.6rem; margin-bottom:1.4rem; }
+.panel-title .step{ font-family:var(--font-display); font-weight:700; color:var(--white); background:var(--brass-600); width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; flex:none; }
+.panel-title h2{ margin:0; font-size:1.25rem; }
+
+/* ---------- Formulaire ---------- */
+.form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.1rem 1.4rem; }
+.form-grid .full{ grid-column:1 / -1; }
+@media (max-width:700px){ .form-grid{ grid-template-columns:1fr; } }
+.field{ display:flex; flex-direction:column; gap:0.35rem; }
+.field label{ font-size:0.8rem; font-weight:600; color:var(--steel-600); }
+.field input, .field textarea{
+  font-family:var(--font-body); font-size:0.95rem; padding:0.7rem 0.85rem;
+  border:1px solid var(--concrete-200); background:var(--concrete-50); color:var(--ink-950); border-radius:2px;
+}
+.field input:focus, .field textarea:focus{ outline:2px solid var(--brass-600); outline-offset:1px; border-color:var(--brass-600); background:var(--white); }
+.field textarea{ resize:vertical; min-height:70px; }
+.form-actions{ margin-top:1.6rem; display:flex; gap:0.9rem; flex-wrap:wrap; align-items:center; }
+.form-note{ font-size:0.85rem; color:var(--steel-600); margin:0 0 1rem; }
+
+.btn{
+  display:inline-flex; align-items:center; gap:0.55rem; cursor:pointer;
+  font-family:var(--font-body); font-weight:600; font-size:0.9rem;
+  padding:0.8rem 1.4rem; border-radius:2px; border:1px solid transparent;
+  transition:background 0.15s ease, border-color 0.15s ease;
+}
+.btn-primary{ background:var(--brass-700); color:var(--white); }
+.btn-primary:hover{ background:var(--brass-800); }
+.btn-outline{ border-color:var(--concrete-200); color:var(--ink-950); background:var(--white); }
+.btn-outline:hover{ border-color:var(--ink-950); }
+.btn-text{ background:none; border:none; color:var(--steel-600); font-size:0.85rem; text-decoration:underline; cursor:pointer; padding:0; }
+.btn:disabled{ opacity:0.5; cursor:not-allowed; }
+
+/* ---------- Aperçu du contrat (reproduction fidèle du .doc original) ----------
+   Police, tailles, alignements, numérotation et tableau de signature copiés
+   du fichier fourni par le client (mesurés via Word) — pas une réinvention
+   graphique. « Vinci Sans » (police corporate ECRB) n'est pas disponible en
+   web-safe/CDN libre : substituée par Inter à l'écran/PDF (visuellement
+   proche, grotesque humaniste comme Vinci Sans), mais le fichier Word
+   exporté déclare bien la police "Vinci Sans" — si l'utilisateur l'a
+   installée (probable chez ECRB), Word l'affichera correctement. */
+#previewPanel{ display:none; }
+#previewPanel.show{ display:block; }
+.paper{
+  background:var(--white); border:1px solid var(--concrete-200); box-shadow:0 6px 24px rgba(21,25,29,0.08);
+  margin:0 auto; max-width:794px;
+  padding: 56px 94px 40px 94px; /* ~1.5cm haut, ~2.5cm cotes/bas, mesures du .doc original */
+  font-family:'Inter','Vinci Sans',Arial,sans-serif;
+  color:#000;
+}
+.paper .doc-letterhead{
+  display:flex; justify-content:flex-start; align-items:center; gap:1em;
+  margin:-16px -34px 1.2em; padding:0 0 0.6em; border-bottom:2px solid #1a8fd1;
+}
+.paper .doc-letterhead img{ height:70px; width:auto; flex:none; }
+.paper .doc-letterhead .agence{ font-size:8.5pt; line-height:1.5; text-align:left; color:#000; }
+.paper h2.doc-title{ text-align:center; font-size:14pt; font-weight:400; margin:0 0 1.4em; border:1px solid #000; padding:0.35em 0.6em; }
+.paper strong.champ{ font-weight:700; }
+.paper .montant-encadre{ border:1px solid #000; padding:0.5em 0.7em; margin:0 0 0.9em; }
+.paper .montant-encadre p{ margin:0 0 0.3em; }
+.paper .montant-encadre p:last-child{ margin-bottom:0; }
+.paper p{ font-size:12pt; line-height:1.4; text-align:justify; color:#000; margin:0 0 0.9em; }
+.paper p.doc-section{ font-weight:700; text-align:left; margin:1.3em 0 0.5em; }
+.paper ul.doc-list{ margin:0 0 0.9em; padding-left:1.4em; font-size:12pt; text-align:justify; }
+.paper ul.doc-list li{ margin-bottom:0.3em; }
+.paper table.sign{ width:100%; border-collapse:collapse; margin-top:2.5em; font-size:11pt; }
+.paper table.sign td{ width:50%; vertical-align:top; border:none; padding:0; }
+.paper table.sign td.entreprise{ text-align:right; }
+.paper table.sign .signature-caption{ font-size:9pt; color:#333; margin:0.4em 0; }
+.paper table.sign img.cachet{ max-width:200px; height:auto; margin-top:0.4em; }
+.paper .doc-footer{
+  margin-top:2.5em; padding-top:0.6em; border-top:1px solid #999;
+  font-family:Arial,Helvetica,sans-serif; font-size:8pt; color:#000;
+  display:flex; flex-direction:column; align-items:center; text-align:center; gap:0.25em;
+}
+.preview-actions{ display:flex; gap:0.9rem; flex-wrap:wrap; justify-content:center; margin-top:1.8rem; }
+
+/* ---------- Tableau de suivi ---------- */
+.table-wrap{ overflow-x:auto; }
+table.tracker{ width:100%; border-collapse:collapse; font-size:0.88rem; }
+table.tracker th{
+  text-align:left; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase;
+  color:var(--steel-600); padding:0.7rem 0.8rem; border-bottom:2px solid var(--concrete-200); white-space:nowrap;
+}
+table.tracker td{ padding:0.7rem 0.8rem; border-bottom:1px solid var(--concrete-200); white-space:nowrap; }
+table.tracker tbody tr:hover{ background:var(--concrete-50); }
+.empty-row td{ text-align:center; color:var(--steel-600); padding:2rem; white-space:normal; }
+.tag{ font-size:0.72rem; padding:0.25rem 0.6rem; border-radius:2px; }
+.tag-cours{ background:var(--brass-100); color:var(--brass-700); }
+.tag-termine{ background:var(--ok-100); color:var(--ok-600); }
+.tracker-actions{ margin-top:1.4rem; display:flex; gap:0.9rem; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+
+footer{ background:var(--ink-950); color:var(--steel-400); padding:1.6rem 0; font-size:0.8rem; text-align:center; }
+
+@media print{
+  header, .intro, .panel:not(#previewPanel), .preview-actions, footer, #trackerPanel{ display:none !important; }
+  #previewPanel .panel-title{ display:none !important; }
+  #previewPanel{ border:none !important; padding:0 !important; margin:0 !important; }
+  body{ background:var(--white); }
+  .paper{ box-shadow:none; border:none; max-width:none; margin:0; }
+}
