@@ -135,7 +135,7 @@ header{ background:var(--ink-950); border-bottom:1px solid rgba(241,239,234,0.1)
 .paper ul.doc-list li{ margin-bottom:0.3em; }
 .paper table.sign{ width:100%; border-collapse:collapse; margin-top:2.5em; font-size:11pt; }
 .paper table.sign td{ width:50%; vertical-align:top; border:none; padding:0; }
-.paper table.sign td.entreprise{ text-align:left; }
+.paper table.sign td.entreprise{ text-align:right; padding-right:10px; }
 .paper table.sign .signature-caption{ font-size:9pt; color:#333; margin:0.4em 0; }
 .paper table.sign img.cachet{ max-width:200px; height:auto; margin-top:0.4em; }
 .paper .doc-footer{

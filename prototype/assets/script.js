@@ -25,6 +25,10 @@ const ENTREPRISE = {
   // Adresse mise à jour par le client (13/08/2026) — auparavant "Villa 56
   // Mariste, Fort B, Dakar" ; désormais la même localité que le cachet.
   adresseAgence: 'Quartier Mbambara, Méckhé, Sénégal',
+  // Même adresse, coupée sur 2 lignes pour l'en-tête (Word + aperçu) — "Méckhé,
+  // Sénégal" descend sur sa propre ligne, comme demandé.
+  adresseAgenceL1: 'Quartier Mbambara',
+  adresseAgenceL2: 'Méckhé, Sénégal',
   ninea: '010156786',
   rccm: 'SN.THS.2023.B.1453',
   telephones: '77 286 25 70 / 33 858 60 65',
@@ -224,7 +228,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         <img src="${IMAGES.logo || 'assets/images/ecrb-logo.png'}" alt="Logo ECRB" width="110" height="93">
         <div class="agence">
           <strong style="color:#${ENTREPRISE.couleurLogo};">${ENTREPRISE.nom}</strong><br>
-          ${ENTREPRISE.adresseAgence}<br>
+          ${ENTREPRISE.adresseAgenceL1}<br>
+          ${ENTREPRISE.adresseAgenceL2}<br>
           Tel : ${ENTREPRISE.telephones.split(' / ')[0]}<br>
           Tel : ${ENTREPRISE.telephones.split(' / ')[1]}
         </div>
@@ -274,8 +279,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           </td>
           <td class="entreprise">
             <p style="text-align:right; margin:0 0 0.4em;">L'entreprise</p>
-            <p style="text-align:left; margin:0;">Le Directeur Général<br>${ENTREPRISE.directeurGeneral}</p>
-            <img class="cachet" src="${IMAGES.cachet || 'assets/images/ecrb-cachet.png'}" alt="Cachet ${ENTREPRISE.nom}" width="190" height="55" style="margin-left:0; margin-right:auto;">
+            <p style="text-align:right; margin:0;">Le Directeur Général<br>${ENTREPRISE.directeurGeneral}</p>
+            <img class="cachet" src="${IMAGES.cachet || 'assets/images/ecrb-cachet.png'}" alt="Cachet ${ENTREPRISE.nom}" width="190" height="55" style="display:block; margin-left:auto; margin-right:0;">
           </td>
         </tr>
       </table>
@@ -543,7 +548,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             spacing: { after: 20 },
             children: [new TextRun({ text: ENTREPRISE.nom, bold: true, size: 18, font: FONT, color: ENTREPRISE.couleurLogo })],
           }),
-          para(ENTREPRISE.adresseAgence, { align: AlignmentType.LEFT, size: 16, after: 20 }),
+          para(ENTREPRISE.adresseAgenceL1, { align: AlignmentType.LEFT, size: 16, after: 0 }),
+          para(ENTREPRISE.adresseAgenceL2, { align: AlignmentType.LEFT, size: 16, after: 20 }),
           para('Tel : ' + ENTREPRISE.telephones.split(' / ')[0], { align: AlignmentType.LEFT, size: 16, after: 0 }),
           para('Tel : ' + ENTREPRISE.telephones.split(' / ')[1], { align: AlignmentType.LEFT, size: 16, after: 0 }),
         ],
@@ -613,31 +619,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     children.push(bulletPara(`${formaterMontant(c.montantSolde)} F après finitions des travaux et réception par le Maitre d'oeuvre.`, { after: 200 }));
     children.push(para('Paiement effectué par virement Ria, Wave ou versement espèce avec décharge.'));
 
-    // Signature : positions mesurées précisément sur les zones de texte du
-    // document source (coordonnées Word) — "L'entreprise" est cadré à
-    // droite (bord droit ~ marge droite), mais "Le Directeur Général" et le
-    // cachet démarrent nettement plus à gauche, alignés à gauche dans la
-    // colonne — ce n'est pas un bloc entièrement aligné à droite.
+    // Signature côté entreprise : les 4 éléments (titre, fonction, nom,
+    // cachet) partagent le même alignement à droite pour former une vraie
+    // colonne, empilés correctement les uns sous les autres — un indent
+    // droit laisse un peu d'air avant la marge de page réelle plutôt que de
+    // venir se coller dessus.
+    const INDENT_ENTREPRISE = { right: 260 };
     const cachetEnfants = [
       new Paragraph({
         alignment: AlignmentType.RIGHT,
+        indent: INDENT_ENTREPRISE,
         spacing: { after: 60 },
         children: [new TextRun({ text: "L'entreprise", size: 24, font: FONT })],
       }),
       new Paragraph({
-        alignment: AlignmentType.LEFT,
+        alignment: AlignmentType.RIGHT,
+        indent: INDENT_ENTREPRISE,
         spacing: { after: 0 },
         children: [new TextRun({ text: 'Le Directeur Général', size: 24, font: FONT })],
       }),
       new Paragraph({
-        alignment: AlignmentType.LEFT,
+        alignment: AlignmentType.RIGHT,
+        indent: INDENT_ENTREPRISE,
         spacing: { after: 80 },
         children: [new TextRun({ text: ENTREPRISE.directeurGeneral, size: 24, font: FONT })],
       }),
     ];
     if (IMAGES.cachetBytes) {
       cachetEnfants.push(new Paragraph({
-        alignment: AlignmentType.LEFT,
+        alignment: AlignmentType.RIGHT,
+        indent: INDENT_ENTREPRISE,
         children: [new ImageRun({ type: 'png', data: IMAGES.cachetBytes, transformation: { width: 180, height: 52 } })],
       }));
     }
