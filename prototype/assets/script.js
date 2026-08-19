@@ -22,12 +22,15 @@ const STORAGE_KEY = 'demo-contrats-ecrb';
 const ENTREPRISE = {
   nom: 'ECRB',
   description: 'Entreprise de construction de routes et bâtiment tout corps d\'état',
-  adresseAgence: 'Villa 56 Mariste, Fort B, Dakar',
+  // Adresse mise à jour par le client (13/08/2026) — auparavant "Villa 56
+  // Mariste, Fort B, Dakar" ; désormais la même localité que le cachet.
+  adresseAgence: 'Quartier Mbambara, Méckhé, Sénégal',
   ninea: '010156786',
   rccm: 'SN.THS.2023.B.1453',
   telephones: '77 286 25 70 / 33 858 60 65',
   email: 'sas.ecrb@ecrb.fr',
   directeurGeneral: 'Abdoul Aziz SAMBE',
+  couleurLogo: '059AE2', // bleu du logo, échantillonné sur l'image réelle
 };
 
 // Logo et cachet préchargés au chargement de la page, sous deux formes :
@@ -220,7 +223,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       <div class="doc-letterhead">
         <img src="${IMAGES.logo || 'assets/images/ecrb-logo.png'}" alt="Logo ECRB" width="110" height="93">
         <div class="agence">
-          <strong>${ENTREPRISE.nom}</strong><br>
+          <strong style="color:#${ENTREPRISE.couleurLogo};">${ENTREPRISE.nom}</strong><br>
           ${ENTREPRISE.adresseAgence}<br>
           Tel : ${ENTREPRISE.telephones.split(' / ')[0]}<br>
           Tel : ${ENTREPRISE.telephones.split(' / ')[1]}
@@ -270,10 +273,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             <p class="signature-caption">Signature et cachet précédé de la mention « lu et approuvé »</p>
           </td>
           <td class="entreprise">
-            L'entreprise<br>
-            Le Directeur Général<br>
-            ${ENTREPRISE.directeurGeneral}<br>
-            <img class="cachet" src="${IMAGES.cachet || 'assets/images/ecrb-cachet.png'}" alt="Cachet ${ENTREPRISE.nom}" width="190" height="55">
+            <p style="text-align:right; margin:0 0 0.4em;">L'entreprise</p>
+            <p style="text-align:left; margin:0;">Le Directeur Général<br>${ENTREPRISE.directeurGeneral}</p>
+            <img class="cachet" src="${IMAGES.cachet || 'assets/images/ecrb-cachet.png'}" alt="Cachet ${ENTREPRISE.nom}" width="190" height="55" style="margin-left:0; margin-right:auto;">
           </td>
         </tr>
       </table>
@@ -465,13 +467,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       insideVertical: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
     };
 
-    // "Vinci Sans" (police corporate ECRB) n'est presque jamais installée
-    // sur la machine qui ouvre le fichier : Word substitue alors par une
-    // police par défaut qui peut être une police à empattements (serif),
-    // très différente de l'aperçu écran/PDF. Arial est universellement
-    // disponible sous Word et visuellement proche d'Inter/Helvetica déjà
-    // utilisées à l'écran et dans le PDF — évite un rendu incohérent.
-    const FONT = 'Arial';
+    // Police du document source. Si "Vinci Sans" (police corporate ECRB)
+    // n'est pas installée sur la machine qui ouvre le fichier, Word
+    // substitue automatiquement une police par défaut — inévitable, ça ne
+    // se corrige pas depuis le script, seulement en installant la police
+    // sur les postes qui ouvrent les contrats générés.
+    const FONT = 'Vinci Sans';
 
     function para(text, { align = AlignmentType.JUSTIFIED, bold = false, italics = false, size = 24, after = 160 } = {}) {
       return new Paragraph({
@@ -537,7 +538,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         width: { size: 78, type: WidthType.PERCENTAGE },
         verticalAlign: VerticalAlign.CENTER,
         children: [
-          para(ENTREPRISE.nom, { align: AlignmentType.LEFT, bold: true, size: 18, after: 20 }),
+          new Paragraph({
+            alignment: AlignmentType.LEFT,
+            spacing: { after: 20 },
+            children: [new TextRun({ text: ENTREPRISE.nom, bold: true, size: 18, font: FONT, color: ENTREPRISE.couleurLogo })],
+          }),
           para(ENTREPRISE.adresseAgence, { align: AlignmentType.LEFT, size: 16, after: 20 }),
           para('Tel : ' + ENTREPRISE.telephones.split(' / ')[0], { align: AlignmentType.LEFT, size: 16, after: 0 }),
           para('Tel : ' + ENTREPRISE.telephones.split(' / ')[1], { align: AlignmentType.LEFT, size: 16, after: 0 }),
@@ -549,7 +554,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       borders: SANS_BORDURE,
       rows: [new TableRow({ children: letterheadCells })],
     }));
-    children.push(new Paragraph({ text: '', border: { bottom: { style: BorderStyle.SINGLE, size: 12, color: '1A8FD1' } }, spacing: { after: 200 } }));
+    children.push(new Paragraph({ text: '', spacing: { after: 200 } }));
 
     children.push(new Paragraph({
       alignment: AlignmentType.CENTER,
@@ -608,33 +613,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     children.push(bulletPara(`${formaterMontant(c.montantSolde)} F après finitions des travaux et réception par le Maitre d'oeuvre.`, { after: 200 }));
     children.push(para('Paiement effectué par virement Ria, Wave ou versement espèce avec décharge.'));
 
-    // Signature : sous-traitant à gauche (avec la mention "signature et
-    // cachet"), entreprise à droite (légèrement décalée vers l'intérieur
-    // pour s'aligner avec le cachet, plus étroit que la colonne).
+    // Signature : positions mesurées précisément sur les zones de texte du
+    // document source (coordonnées Word) — "L'entreprise" est cadré à
+    // droite (bord droit ~ marge droite), mais "Le Directeur Général" et le
+    // cachet démarrent nettement plus à gauche, alignés à gauche dans la
+    // colonne — ce n'est pas un bloc entièrement aligné à droite.
     const cachetEnfants = [
       new Paragraph({
         alignment: AlignmentType.RIGHT,
-        indent: { right: 300 },
         spacing: { after: 60 },
         children: [new TextRun({ text: "L'entreprise", size: 24, font: FONT })],
       }),
       new Paragraph({
-        alignment: AlignmentType.RIGHT,
-        indent: { right: 300 },
+        alignment: AlignmentType.LEFT,
         spacing: { after: 0 },
         children: [new TextRun({ text: 'Le Directeur Général', size: 24, font: FONT })],
       }),
       new Paragraph({
-        alignment: AlignmentType.RIGHT,
-        indent: { right: 300 },
+        alignment: AlignmentType.LEFT,
         spacing: { after: 80 },
         children: [new TextRun({ text: ENTREPRISE.directeurGeneral, size: 24, font: FONT })],
       }),
     ];
     if (IMAGES.cachetBytes) {
       cachetEnfants.push(new Paragraph({
-        alignment: AlignmentType.RIGHT,
-        indent: { right: 300 },
+        alignment: AlignmentType.LEFT,
         children: [new ImageRun({ type: 'png', data: IMAGES.cachetBytes, transformation: { width: 180, height: 52 } })],
       }));
     }
